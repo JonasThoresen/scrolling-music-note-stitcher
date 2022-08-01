@@ -12,7 +12,7 @@ IMPORT_DIR = BASE_DIR + '\\Import'
 EXPORT_DIR = BASE_DIR + '\\Tmp'
 SAVE_DIR = BASE_DIR + '\\Scores'
 DONE_DIR = IMPORT_DIR + '\\Done'
-FOLDER_LIST = [EXPORT_DIR, SAVE_DIR, DONE_DIR]
+FOLDER_LIST = [IMPORT_DIR, EXPORT_DIR, SAVE_DIR, DONE_DIR]
 
 EXIT_CLI = 99
 EXIT_PROG = 100
@@ -28,10 +28,12 @@ discard_val = 0
 VIEWPOINT_MAX = 10
 viewpoint_val = 0
 
-# Make folders
+
 def make_folder(folder):
+    """ Make folders """
     if not os.path.isdir(folder):
         os.makedirs(folder)
+
 
 for folder in FOLDER_LIST:
     make_folder(folder)
@@ -41,7 +43,9 @@ cli = True
 list_of_files = glob.glob(IMPORT_DIR+'\\*.mp4')
 active_files = [0 for x in list_of_files]
 
-while(cli):
+assert len(active_files) > 0, "There are no files in the import folder"
+
+while (cli):
     for i, file in enumerate(list_of_files):
         status = '(Skipping)'
         if active_files[i]:
@@ -51,7 +55,7 @@ while(cli):
     print(f"[{EXIT_CLI}] Continue")
     print(f"[{EXIT_PROG}] Exit Program")
     print(f"\nType any number to activate that file for parsing,"
-            f"\n{len(list_of_files)} to activate all files")
+          f"\n{len(list_of_files)} to activate all files")
     user = input()
     parse_user = user.strip()
 
@@ -77,35 +81,36 @@ SKIP_X_FILES = 300
 @jit # Jit to enable GPU processing
 def extract_images(path):
     export_path = EXPORT_DIR + '\\' + os.path.basename(path)[0:-4]
-    make_folder(export_path) # Create savefolder
+    make_folder(export_path)  # Create savefolder
 
-    capture_image = cv2.VideoCapture(path) 
-    frame_count = 0 
+    capture_image = cv2.VideoCapture(path)
+    frame_count = 0
     userSkipFrames = SKIP_X_FILES  # each x-th frame is captured
 
-	# Change working dir
+    # Change working dir
     os.chdir(export_path)
-    i=userSkipFrames
+    i = userSkipFrames
     j = 0
 
     # Reading each frame
-    while (True): 
-        con,frames = capture_image.read() 
-        if con:     # con will test until last frame is extracted 
-            if(i >= userSkipFrames):
+    while (True):
+        con, frames = capture_image.read()
+        if con:     # con will test until last frame is extracted
+            if (i >= userSkipFrames):
                 # Giving names to each frame and printing while extracting
                 name = str(j)+'.jpg'
                 print('Capturing --- '+name)
-                cv2.imwrite(name, frames) 
+                cv2.imwrite(name, frames)
                 i = 1
                 j += 1
             else:
-                 i += 1
+                i += 1
             frame_count = frame_count + 1
         else:
             break
-    
+
     os.chdir(BASE_DIR)
+
 
 # Main loop after CLI
 for file in active_file_names:
