@@ -23,7 +23,7 @@ viewpoint_val = 0
 
 def create_score(score_path):
     """
-    Creates a score from a series of images. 
+    Creates a score from a series of images.
     The images must be placed in the tmp folder.
     The images can be created using create_images.py.
     """
@@ -33,7 +33,7 @@ def create_score(score_path):
     END_OF_HEADER = 120
     WINDOW_NAME = "Adjustment tool"
 
-    # Create trackbar functions 
+    # Create trackbar functions
     def get_height(val):
         global height_val
         if val == 0:
@@ -66,15 +66,15 @@ def create_score(score_path):
 
         for i, src in enumerate(cv_images):
             if i == len(cv_images)-1:
-                w = src.shape[1] # Get image width
-                new_height = src.shape[0] # Get image height
+                w = src.shape[1]  # Get image width
+                new_height = src.shape[0]  # Get image height
                 processed_list.append(src[END_OF_HEADER:new_height, 0:w])
 
             elif i >= len(cv_images) - discard_val:
-                pass # Pass the last X amount of frames
+                pass  # Pass the last X amount of frames excluding the last one
 
             else:
-                w = src.shape[1] # Get image width
+                w = src.shape[1]  # Get image width
                 new_height = END_OF_HEADER + height_val
                 processed_list.append(src[END_OF_HEADER:new_height, 0:w])
 
@@ -83,38 +83,40 @@ def create_score(score_path):
             processed_list = processed_list[viewpoint_val:]
 
         # Stack images
-        build_image = cv2.vconcat(processed_list) 
+        build_image = cv2.vconcat(processed_list)
 
         # Then scale
         cropped_h = build_image.shape[0]
         scaled_h = math.floor(cropped_h * (0.8 + 0.4*scale_val/SCALE_MAX))
-        resized = cv2.resize(build_image, (w,scaled_h))
+        resized = cv2.resize(build_image, (w, scaled_h))
 
         # And show
         cv2.imshow(WINDOW_NAME, resized)
 
-        if(ret):
+        if (ret):
             return resized
 
     # Start
     images = glob.glob(score_path + "\\*.jpg")
-    sorted_images = sorted(images, key=lambda x: int(os.path.split(x)[-1].replace(".jpg","")))
+    sorted_images = sorted(images, key=lambda x: int(os.path.split(x)[-1].replace(".jpg", "")))
     print(sorted_images)
     for image in sorted_images:
         cv_images.append(cv2.imread(image))
 
     # Process
-    cv2.namedWindow(WINDOW_NAME) #, cv2.WINDOW_NORMAL
-    cv2.createTrackbar("Height", WINDOW_NAME , height_val, HEIGHT_MAX, get_height)
-    cv2.createTrackbar("Scale", WINDOW_NAME , scale_val, SCALE_MAX, get_scale)
-    cv2.createTrackbar("Discard", WINDOW_NAME , discard_val, DISCARD_MAX, get_discard)
-    cv2.createTrackbar("Viewpoint", WINDOW_NAME , viewpoint_val, VIEWPOINT_MAX, get_viewpoint)
+    cv2.namedWindow(WINDOW_NAME)  # cv2.WINDOW_NORMAL
+    cv2.createTrackbar("Height", WINDOW_NAME, height_val, HEIGHT_MAX, get_height)
+    cv2.createTrackbar("Scale", WINDOW_NAME, scale_val, SCALE_MAX, get_scale)
+    cv2.createTrackbar("Discard", WINDOW_NAME, discard_val, DISCARD_MAX, get_discard)
+    cv2.createTrackbar("Viewpoint", WINDOW_NAME, viewpoint_val, VIEWPOINT_MAX, get_viewpoint)
 
     update_image()
 
     # Wait until user presses some key
-    while(cv2.waitKey() != 113 or cv2.waitKey() != 81 or cv2.waitKey() != 83 or cv2.waitKey() != 115):
-        if(cv2.waitKey() == 83 or cv2.waitKey() == 115):
+    while (cv2.waitKey() != 113 or cv2.waitKey() != 81 or
+           cv2.waitKey() != 83 or cv2.waitKey() != 115):
+
+        if (cv2.waitKey() == 83 or cv2.waitKey() == 115):
             tmp_dir = SAVE_DIR + f"\\{os.path.basename(os.path.normpath(score_path))}.jpg"
             tmp_img = update_image(True)
             cv2.imwrite(tmp_dir, tmp_img)
@@ -130,25 +132,25 @@ BASE_DIR = os.getcwd()
 EXPORT_DIR = BASE_DIR + "\\Tmp"
 SAVE_DIR = BASE_DIR + "\\Scores"
 FOLDER_LIST = [SAVE_DIR]
-
 EXIT_CLI = 99
 EXIT_PROG = 100
 
-# Make folders
+
 def make_folder(folder):
     """ Creates the input folder if it does not exist """
     if not os.path.isdir(folder):
         os.makedirs(folder)
+
 
 for folder in FOLDER_LIST:
     make_folder(folder)
 
 cli = True
 list_of_folders = [x[0] for x in os.walk(EXPORT_DIR)]
-list_of_folders.pop(0) # Pop to remove parent folder
+list_of_folders.pop(0)  # Pop to remove parent folder
 active_folders = [0 for folder in list_of_folders]
 
-while(cli):
+while (cli):
     for i, file in enumerate(list_of_folders):
         status = "(Skipping)"
         if active_folders[i]:
@@ -158,7 +160,7 @@ while(cli):
     print(f"[{EXIT_CLI}] Continue")
     print(f"[{EXIT_PROG}] Exit Program")
     print(f"\nType any number to activate that file for parsing,"
-            f"\n{len(list_of_folders)} to activate all files")
+          f"\n{len(list_of_folders)} to activate all files")
     user = input()
     parse_user = user.strip()
 
