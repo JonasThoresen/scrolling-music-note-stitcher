@@ -11,18 +11,19 @@ Preferrably one would use OpenCV to stitch images, but sadly OPENCV isn't easily
 Before installing, make sure that the video has the correct name of the artist and songname. The video name is used for the final export name. After, continue with the following:
 
 1. Add the MP4(s) to the main area in a folder named "import"
-  a. The folder can be manually created if it is missing
-2. Launch "create_images"
-  a. This converts the MP4(s) to an image set
-3. Select the MP4(s) to convert
-  b. Note: All files can be converted in one launch
-3. Launch "create_scores" after all your MP4(s) are converted
-4. Select MP4(s) to convert to notesheets
-5. The notesheet will pop-up in an editor, where different properties can be adjusted
-6. Adjust the properties and scroll through the sheet so that it fits properly
-7. Press "S" to save or "Q" to quit
-  a. It might use some time after pressing S
-  b. The tool/GUI needs to be selected when pressing S or Q
+    1. The folder can be manually created if it is missing
+    1. Optionally, run the program once and it will create all necessary folders for you. An error will pop-up showing that there are no video files in the import folder.
+1. Launch "create_images"
+    1. This converts the MP4(s) to an image set
+1. Select the MP4(s) to convert
+    1. Note: All files can be converted in one launch
+1. Launch "create_scores" after all your MP4(s) are converted
+1. Select MP4(s) to convert to notesheets
+1. The notesheet will pop-up in an editor, where different properties can be adjusted
+1. Adjust the properties and scroll through the sheet so that it fits properly
+1. Press "S" to save or "Q" to quit
+    1. The tool can use several seconds after pressing S to "show response" in the GUI, however there is activity in the CLI
+    1. The tool/GUI needs to be selected when pressing S or Q
 
 ## Potential improvements
 - Merge Create_images and create_scores as one launch
